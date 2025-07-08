@@ -1,12 +1,10 @@
-# devops_vuln_scanner.py
+
 
 import random
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
-# ---------------------------
-# 1. Simulate Vulnerability Scan Results
-# ---------------------------
+
 
 def mock_scan_results():
     """
@@ -28,16 +26,12 @@ def mock_scan_results():
         vuln_data.append(vuln)
     return pd.DataFrame(vuln_data)
 
-# ---------------------------
-# 2. Simple ML Model for Risk Scoring
-# ---------------------------
 
 def train_risk_model():
     """
     Trains a dummy ML model to predict HIGH_RISK vulnerabilities
     based on attributes.
     """
-    # Generate mock training data
     train_data = []
     for _ in range(500):
         sev = random.choice(["Low", "Medium", "High", "Critical"])
@@ -53,7 +47,6 @@ def train_risk_model():
         columns=["severity", "exploit_available", "affected_assets", "fix_complexity", "high_risk"]
     )
     
-    # Encode categorical features
     df_train_enc = pd.get_dummies(df_train, columns=["severity", "fix_complexity"])
 
     X_train = df_train_enc.drop("high_risk", axis=1)
@@ -71,7 +64,6 @@ def predict_risk(model, df_vulns):
     df_input = df_vulns.copy()
     df_input_enc = pd.get_dummies(df_input, columns=["severity", "fix_complexity"])
 
-    # Align columns with training set
     train_columns = model.feature_names_in_
     for col in train_columns:
         if col not in df_input_enc.columns:
@@ -83,9 +75,7 @@ def predict_risk(model, df_vulns):
     df_vulns["high_risk"] = risk_preds
     return df_vulns
 
-# ---------------------------
-# 3. Prioritize Vulnerabilities
-# ---------------------------
+
 
 def prioritize_vulnerabilities(df_vulns):
     """
@@ -103,10 +93,6 @@ def prioritize_vulnerabilities(df_vulns):
     )
     return df_sorted
 
-# ---------------------------
-# 4. Generate Remediation Plan
-# ---------------------------
-
 def generate_remediation_plan(df_sorted):
     """
     Generates simple remediation steps
@@ -123,29 +109,20 @@ def generate_remediation_plan(df_sorted):
         remediation_steps.append(step)
     return remediation_steps
 
-# ---------------------------
-# MAIN FLOW
-# ---------------------------
 
 if __name__ == "__main__":
     print("=== DevOps Security Vulnerability Scanner ===")
 
-    # 1. Mock scan
     df_vulns = mock_scan_results()
     print(f"Scanned {len(df_vulns)} vulnerabilities.\n")
 
-    # 2. Train ML model
     model = train_risk_model()
 
-    # 3. Predict risk
     df_scored = predict_risk(model, df_vulns)
 
-    # 4. Prioritize
     df_prioritized = prioritize_vulnerabilities(df_scored)
 
-    # 5. Generate remediation plan
     remediation_plan = generate_remediation_plan(df_prioritized)
 
-    # Print results
     for item in remediation_plan:
         print(item)
